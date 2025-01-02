@@ -1,0 +1,161 @@
+1. itertools 
+1-1. permutations(순열)
+from itertools import permutations
+
+data = ['A','B','C']
+result = list(permutations(data,3))   # 입력값1 : 사용할 데이터 값, 입력값2 : 뽑을 개수
+print(result) 
+>>> [('A', 'B', 'C'), ('A', 'C', 'B'), ('B', 'A', 'C'), ('B', 'C', 'A'), ('C', 'A', 'B'), ('C', 'B', 'A')]
+
+1-2. combianations(조합)
+from itertools import combinations
+
+data = ['A','B','C']
+result = list(combinations(data,2))   # 입력값1 : 사용할 데이터 값, 입력값2 : 뽑을 개수
+print(result) 
+>>> [('A', 'B'), ('A', 'C'), ('B', 'C')]
+
+1-3. product(중복순열)
+from itertools import product
+
+data = ['A','B','C']
+result = list(product(data,repeat = 2))   # 입력값1 : 사용할 데이터 값, 입력값2 : 뽑을 개수 !!repeat =!!
+print(result) 
+>>> [('A', 'A'), ('A', 'B'), ('A', 'C'), ('B', 'A'), ('B', 'B'), ('B', 'C'), ('C', 'A'), ('C', 'B'), ('C', 'C')]
+
+1-4. combinations_with_replacement(중복조합)
+from itertools import combinations_with_replacement
+
+data = ['A','B','C']
+result = list(combinations_with_replacement(data,2))   # 입력값1 : 사용할 데이터 값, 입력값2 : 뽑을 개수 
+print(result) 
+>>> [('A', 'A'), ('A', 'B'), ('A', 'C'), ('B', 'B'), ('B', 'C'), ('C', 'C')]
+
+2. heapq
+- heap 참고자료 : https://wikidocs.net/194445 , https://gmlwjd9405.github.io/2018/05/10/data-structure-heap.html
+- heqp이란 우선순위 큐 기능을 사용하기 위한 라이브러리
+- 파이썬은 min heap만 지원 -> max heap을 사용할려면 부호를 반대로 넣었다가 뺄 때 반대로 부호 붙여서 빼기
+- 힙에 넣었다 빼면 자동으로 오름차순으로 정렬(min heap이므로), 내림차순 정렬 -> max heap 사용 , 따라서 시간 복잡도는 O(NlogN)
+
+원소 삽입 메소드 : heapq.heappush(data,값)   # data : 힙 구조인 자료, 값 : 힙에 넣을 값
+원소 제거 메소드 : heapq.heappop(data)      # data : 힙 구조인 자료
+
+힙 초기화 방법은 리스트 생성원리와 똑같으니 주의
+
+import heapq
+
+def heapsort(iterable) :
+    h = []   # 힙
+    result = []   # 리스트 
+    # 모든 원소를 차례대로 힙에 삽입
+    for value in iterable : 
+        heapq.heappush(h,value)
+    #힙에 삽입된 모든 원소를 차례대로 꺼내어 담기
+    for i in range(len(h)) :
+        result.append(heapq.heappop(h)) -> 우선순위 큐(FIFO)이기 때문에 작은 값 순서대로 result에 추가
+    return result
+
+result = heapsort([1,3,5,7,9,2,4,6,8,0])
+print(result)
+>>> [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+* max heap 구현 방법
+import heapq
+
+def heapsort(iterable) :
+    h = []   # 힙
+    result = []   # 리스트 
+    # 모든 원소를 차례대로 힙에 삽입
+    for value in iterable : 
+        heapq.heappush(h,-value)
+    #힙에 삽입된 모든 원소를 차례대로 꺼내어 담기
+    for i in range(len(h)) :
+        result.append(-heapq.heappop(h)) -> 우선순위 큐(FIFO)이기 때문에 작은 값 순서대로 result에 추가
+    return result
+
+result = heapsort([1,3,5,7,9,2,4,6,8,0])
+print(result)
+>>> [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+
+3. bisect
+- 이진 탐색 쉽게 구현
+- !정렬된 배열! 에서 특정한 원소 찾을 때 효과
+
+bisect_right(data,x) : #data : 찾을 데이터, x: 넣을 데이터, 오른쪽에서부터 x를 넣을 가장 오른쪽 인덱스를 찾아나감, 시간 복잡도 : O(NlogN)
+bisect_left(data,x) : #data : 찾을 데이터, x: 넣을 데이터, 왼쪽에서부터 x를 넣을 가장 왼쪽 인덱스를 찾아나감, 시간 복잡도 : O(NlogN)
+
+from bisect import bisect_right,bisect_left
+
+a = [1,2,4,4,8]
+x = 4
+
+print(bisect_right(a,x))
+print(bisect_left(a,x))
+>>>2
+   4
+
+- 이러한 특성으로 정렬된 리스트에서 특정 범위에 속하는 원소의 개수 구할 때 많이 사용
+
+from bisect import bisect_right,bisect_left
+
+def count_by_range(a,left_value,right_value) :
+    right_index = bisect_right(a,right_value)
+    left_index = bisect_left(a,left_value)
+    return right_index-left_index
+
+a = [1,2,3,3,3,3,4,4,8,9]
+
+print(count_by_range(a,4,4))   # 4의 개수
+print(count_by_range(a,-1,3))  # -1과 3(포함)사이에 있는 값의 개수
+>>>2
+   6
+
+4. collections
+4-1. deque(클래스) # 스택이나 큐 둘 다 사용가능
+- 데이터 삭제나 삽입에서 굉장히 효과적
+- 리스트와 비슷하나 다른 점이 있음
+	                        리스트	deque
+가장 앞쪽에 원소 추가	        O(N)	O(1)
+가장 뒤쪽에 원소 추가	        O(1)	O(1)
+가장 앞쪽에 있는 원소 제거      	O(N)	O(1)
+가장 뒤쪽에 있는 원소 제거	      O(1)	O(1)
+인덱싱,슬라이싱               가능   불가능
+
+deque 함수
+- append()
+- appendleft()
+- pop()
+- popleft()
+
+from collections import deque
+
+data = deque([2,3,4])
+data.append(1)
+data.appendleft(5)
+
+print(data)
+print(list(data))
+>>>deque([5, 2, 3, 4, 1])
+   [5, 2, 3, 4, 1]
+
+4-2. Counter : 등장 횟수를 세는 기능
+count 함수 쓸 때 보다 시간 복잡도 훨씬 줄이기 가능
+
+from collections import Counter
+
+Counter = Counter(['red','blue','red','green','blue','blue'])
+
+print(counter['blue'])
+print(counter['green'])
+print(dict(counter))  #사전 자료형으 변환
+>>> 3
+    1
+    {'red':2,'blue':3,'green':1}
+
+
+5. math : 수학 기능 많이 포함
+- factorial(x) : 팩토리얼 출력
+- sqrt(x) : 제곱근 출력
+- gcd(a,b) : a와 b의 최대공약수 출력
+- math.pi,math.e : 파이 출력, 자연상수 e 출력
+
