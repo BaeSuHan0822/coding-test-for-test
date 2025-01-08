@@ -1,0 +1,50 @@
+재귀함수 : Recursion
+파이선에서 재귀함수 호출 제한 : 1000번
+해결 방법
+import sys
+sys.setrecursionlimit(10**6) -> 재귀함수 호출 제한 횟수를 10**6으로 늘이기
+
+재귀함수 설정순서
+1. 종료조건 먼저 작성
+- 문제를 읽고 마지막에 return 또는 print 해야하는 값을 조건으로 if 설정
+2. 기본 수행동작 작성
+- 문제가 요구하는 사항(값을 더하기 또는 곱하기 또는 저장하기 등등...)을 작성하기
+- 탑다운 : 기본 수행 동작을 함수를 불러오는 식의 뒤에 있어야됨
+ex) 
+import sys
+sys.setrecursionlimit(10**6)
+
+n = int(input())
+
+def number(x) :
+    if x == 1 :            # 1. 종료조건 먼저 작성
+        print(1)         
+    elif x%2 == 0 :        # 2. 기본 수행동작 작성
+        print(x)       -> 함수 앞
+        number(x//2)
+    else :                 # 2. 기본 수행동작 작성
+        print(x)       -> 함수 앞
+        number(3*x + 1)
+
+number(n)
+
+- 바텀업 : 기본 수행 동작을 함수를 불러오는 식의 앞에 있어야됨
+ex)
+import sys
+sys.setrecursionlimit(10**6)
+
+n = int(input())
+
+def number(x) :
+    if x == 1 :          # 1. 종료조건 먼저 작성
+        print(1)        
+    elif x%2 == 0 :      # 2. 기본 수행동작 작성
+        number(x//2)   
+        print(x)        -> 함수 뒤
+    else :               # 2. 기본 수행동작 작성
+        number(3*x + 1)
+        print(x)        -> 함수 뒤
+
+number(n)
+
+
